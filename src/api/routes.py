@@ -54,3 +54,21 @@ def login():
     access_token = create_access_token(identity=email)
     return jsonify(access_token=access_token)
 
+@api.route("/singup", methods=["POST"])
+def singup():
+
+    body = request.get_json()
+    print(body)
+    user = User.query.filter_by(email=body["email"]).first()
+    print(user)
+    if user == None:
+        user = User(email=body["email"], password=body["password"], is_active=True)
+        db.session.add(user)
+        db.session.commit()
+        response_body = {
+            "msg" : "Usuario creado"
+         }
+        return jsonify(response_body), 200
+    else:
+       return jsonify(response_body = {"msg" : "el usuario ya existe"}), 401
+    
